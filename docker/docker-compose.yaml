@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: superglue-server
+    ports:
+      - "${GRAPHQL_PORT:-3000}:3000"
+    env_file:
+      - .env
+    volumes:
+      - superglue_data:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: superglue-web
+    ports:
+      - "${WEB_PORT:-3001}:3001"
+    env_file:
+      - .env
+    depends_on:
+      - server
+    restart: unless-stopped
+
+volumes:
+  superglue_data:
